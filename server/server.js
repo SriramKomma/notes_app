@@ -8,7 +8,24 @@ const tagsRoutes = require('./routes/tagsRoutes');
 const app = express();
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://notes-app-phi-dusky-91.vercel.app'
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow server-to-server calls (e.g. Render health checks) where origin is undefined
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Routes
